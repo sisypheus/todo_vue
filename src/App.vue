@@ -1,28 +1,49 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <input v-model="newLocation" @keyup.enter="addLocation()">
+    <button @click="addLocation()">Submit</button>
+    <div v-for="(location, index) in locations" :key="location.id">
+      <p v-if="typeof location.weather != 'undefined'">{{location.weather.name}}, {{location.weather.sys.country}}</p>
+      <div class="weather-box" v-if="typeof location.weather != 'undefined'">
+      <p>{{Math.round(location.weather.main.temp) + '°C'}}</p>
+      </div>
+      <p v-if="location.weather.main.temp >= 20">&#127777;</p>
+      <button @click="locations.splice(index, 1)">Delete</button>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      id: 0,
+      locations: [],
+      newLocation: null,
+      apikey: process.env.VUE_APP_API_KEY,
+      baseurl: 'https://api.openweathermap.org/data/2.5/weather?q=',
+      weather: {}
+    }
+  },
+  methods: {
+    async addLocation() {
+      this.baseurl += this.newLocation + '&units=metric&appid=' + this.apikey;
+      this.weather = fetch(this.baseurl)
+        .then(res => {
+          return (res.json());
+        })
+          .then(this.setResults);
+    },
+
+    setResults (results) {
+      this.weather = results;
+      console.log(this.weather);
+      this.locations.push({ title: this.newLocation, id: this.id ++, weather: this.weather});
+      this.newLocation = null;
+      this.weather = {};
+      this.baseurl = 'https://api.openweathermap.org/data/2.5/weather?q=';
+    }
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
