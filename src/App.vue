@@ -4,9 +4,7 @@
     <button @click="addLocation()">Submit</button>
     <div v-for="(location, index) in locations" :key="location.id">
       <p v-if="typeof location.weather != 'undefined'">{{location.weather.name}}, {{location.weather.sys.country}}</p>
-      <div class="weather-box" v-if="typeof location.weather != 'undefined'">
-      <p>{{Math.round(location.weather.main.temp) + '°C'}}</p>
-      </div>
+      <p v-if="typeof location.weather != 'undefined'">{{Math.round(location.weather.main.temp) + '°C'}}</p>
       <p v-if="location.weather.main.temp >= 20">&#127777;</p>
       <button @click="locations.splice(index, 1)">Delete</button>
     </div>
@@ -44,7 +42,7 @@ export default {
         return;
       }
       this.weather = results;
-      this.locations.push({ title: this.newLocation, id: this.id ++, weather: this.weather});
+      this.locations.push({ title: this.newLocation, id: this.id++, weather: this.weather});
       this.resetVar();
     },
 
