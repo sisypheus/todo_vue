@@ -26,14 +26,13 @@ export default {
   },
   methods: {
     addLocation() {
-      this.baseurl += this.newLocation + '&units=metric&appid=' + this.apikey;
-      this.weather = fetch(this.baseurl)
+      this.weather = fetch(`${this.baseurl}${this.newLocation}&units=metric&appid=${this.apikey}`)
         .then(res => {
           if (res.status != 200)
-            return ("error");
-          return (res.json());
+            return 'error';
+          return res.json();
         })
-          .then(this.setResults);
+        .then(this.setResults);
     },
 
     setResults (results) {
@@ -49,7 +48,6 @@ export default {
     resetVar () {
       this.newLocation = null;
       this.weather = {};
-      this.baseurl = 'https://api.openweathermap.org/data/2.5/weather?q=';
     }
   }
 }
